@@ -7,10 +7,14 @@ const axios = require('axios'); // For AI API calls
 
 const app = express();
 const server = http.createServer(app);
+
+// Set pingInterval and pingTimeout options for Socket.IO
 const io = socketIo(server, {
   cors: {
     origin: '*',
   },
+  pingInterval: 30000, // Send a ping every 30 seconds
+  pingTimeout: 960000, // Wait 16 minutes for a pong before closing connection. Should change this to have prod/dev values.
 });
 
 app.use(cors());
@@ -161,8 +165,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+  socket.on('disconnect', (reason) => {
+    console.log(`Client disconnected: ${socket.id}. Reason: ${reason}`);
     // Remove player from game rooms
     for (let roomCode in gameRooms) {
       const room = gameRooms[roomCode];
@@ -181,6 +185,14 @@ io.on('connection', (socket) => {
         delete gameRooms[roomCode];
       }
     }
+  });
+
+  socket.on('connect_error', (error) => {
+    console.error(`Connection error with client ${socket.id}:`, error.message);
+  });
+
+  socket.on('connect_timeout', () => {
+    console.error(`Connection timeout for client ${socket.id}`);
   });
 });
 
