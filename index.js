@@ -26,6 +26,16 @@ let gameRooms = {};
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
+  socket.on('getPlayers', ({ roomCode }, callback) => {
+    console.log(`getPlayers received from ${socket.id} for room ${roomCode}`);
+  
+    if (gameRooms[roomCode]) {
+      callback(gameRooms[roomCode].players);
+    } else {
+      callback([]);
+    }
+  });
+
   // Create Game Room
   socket.on('createGame', (callback) => {
     const roomCode = generateRoomCode();
@@ -42,7 +52,6 @@ io.on('connection', (socket) => {
       },
       scores: {},
     };
-    socket.join(roomCode);
     callback({ roomCode });
   });
 
