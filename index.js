@@ -214,7 +214,7 @@ async function generateAIImage(prompt) {
   // Placeholder for AI API call
   // Replace with actual API call to your AI service
   // For example, using OpenAI API (ensure to handle API keys securely)
-  return 'https://example.com/generated-image.png';
+  return 'https://pics.craiyon.com/2023-11-06/6780d799dd1c40f3bc5fe43a06fc72ac.webp';
 }
 
 server.listen(4000, () => {
